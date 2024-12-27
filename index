@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Cipher: Encrypt & Decrypt</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Tahoma', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #2e2b47;
+        color: #b993ff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-image: url('https://www.transparenttextures.com/patterns/little-tiles.png');
+        background-size: cover;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: #8b59c9;
+        text-align: center;
+        font-family: 'Cursive', sans-serif;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        color: #8b59c9;
+        font-family: 'Cursive', sans-serif;
+    }
+
+    label, p {
+        color: #b993ff;
+        font-size: 1.1rem;
+        margin: 10px 0;
+    }
+
+    textarea, input, select {
+        width: 100%;
+        padding: 10px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        border: 2px solid #8b59c9;
+        margin-top: 10px;
+        background-color: #fff;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #8b59c9;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        margin-top: 15px;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #6b44a7;
+    }
+
+    .container {
+        width: 80%;
+        max-width: 800px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        margin: 20px;
+        text-align: center;
+    }
+
+    .heart {
+        color: #8b59c9;
+        font-size: 1.5rem;
+        margin-top: 15px;
+    }
+
+    .encrypted-message, .decrypted-message {
+        background: #3d2d5c;
+        border: 1px solid #8b59c9;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 8px;
+    }
+
+    .footer {
+        margin-top: 30px;
+        font-size: 1rem;
+        color: #b993ff;
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            width: 90%;
+            padding: 15px;
+        }
+    }
+
+</style>
+</head>
+<body>
+<h1>Love Cipher: A Secret Just for Us</h1>
+<div class="container">
+<h3>💌 Encrypt Your Love Message</h3>
+<label for="cipherType">Choose Cipher Type:</label>
+<select id="cipherType" onchange="changeCipherOptions()">
+    <option value="custom">Custom Cipher (Word-based)</option>
+    <option value="caesar">Caesar Cipher</option>
+    <option value="binary">Binary</option>
+    <option value="ascii">ASCII</option>
+    <option value="rot13">ROT13</option>
+</select>
+<br>
+
+<div id="customOptions">
+    <label for="customKey">Enter Custom Cipher Key (Word):</label>
+    <input type="text" id="customKey" placeholder="Enter word" />
+</div>
+
+<div id="caesarOptions" style="display: none;">
+    <label for="caesarKey">Enter Caesar Shift (number):</label>
+    <input type="number" id="caesarKey" placeholder="Number" />
+</div>
+
+<div id="binaryOptions" style="display: none;">
+    <label for="binaryKey">Binary (No Key Needed)</label>
+</div>
+
+<div id="asciiOptions" style="display: none;">
+    <label for="asciiKey">ASCII (No Key Needed)</label>
+</div>
+
+<div id="rot13Options" style="display: none;">
+    <label for="rot13Key">ROT13 (No Key Needed)</label>
+</div>
+
+<label for="plainText">Enter Plain Message:</label>
+<textarea id="plainText" placeholder="Enter your plain message"></textarea><br>
+<button type="button" onclick="encryptMessage()">Encrypt</button>
+<div class="encrypted-message" id="encryptedMessage"></div>
+<h3 class="heart">❤️ Send Your Love Secret ❤️</h3>
+</div>
+<hr>
+<div class="container">
+<h3>💌 Decrypt Your Love Message</h3>
+<label for="cipherTypeDecrypt">Choose Cipher Type:</label>
+<select id="cipherTypeDecrypt" onchange="changeCipherOptionsDecrypt()">
+    <option value="custom">Custom Cipher (Word-based)</option>
+    <option value="caesar">Caesar Cipher</option>
+    <option value="binary">Binary</option>
+    <option value="ascii">ASCII</option>
+    <option value="rot13">ROT13</option>
+</select>
+<br>
+
+<div id="customOptionsDecrypt">
+    <label for="customKeyDecrypt">Enter Custom Cipher Key (Word):</label>
+    <input type="text" id="customKeyDecrypt" placeholder="Enter word" />
+</div>
+
+<div id="caesarOptionsDecrypt" style="display: none;">
+    <label for="caesarKeyDecrypt">Enter Caesar Shift (number):</label>
+    <input type="number" id="caesarKeyDecrypt" placeholder="Number" />
+</div>
+
+<div id="binaryOptionsDecrypt" style="display: none;">
+    <label for="binaryKeyDecrypt">Binary (No Key Needed)</label>
+</div>
+
+<div id="asciiOptionsDecrypt" style="display: none;">
+    <label for="asciiKeyDecrypt">ASCII (No Key Needed)</label>
+</div>
+
+<div id="rot13OptionsDecrypt" style="display: none;">
+    <label for="rot13KeyDecrypt">ROT13 (No Key Needed)</label>
+</div>
+
+<label for="cipherText">Enter Ciphered Message:</label>
+<textarea id="cipherText" placeholder="Enter the ciphered message"></textarea><br>
+<button type="button" onclick="decryptMessage()">Decrypt</button>
+<div class="decrypted-message" id="decryptedMessage"></div>
+<h3 class="heart">❤️ Your Love Revealed ❤️</h3>
+</div>
+<div class="footer">
+<p>Made with ❤️ for Amy by Declan</p>
+</div>
+
+<script>
+function changeCipherOptions() {
+    const cipherType = document.getElementById("cipherType").value;
+    document.getElementById("customOptions").style.display = cipherType === "custom" ? "block" : "none";
+    document.getElementById("caesarOptions").style.display = cipherType === "caesar" ? "block" : "none";
+}
+
+function changeCipherOptionsDecrypt() {
+    const cipherType = document.getElementById("cipherTypeDecrypt").value;
+    document.getElementById("customOptionsDecrypt").style.display = cipherType === "custom" ? "block" : "none";
+    document.getElementById("caesarOptionsDecrypt").style.display = cipherType === "caesar" ? "block" : "none";
+}
+
+function encryptMessage() {
+    const plainText = document.getElementById("plainText").value;
+    const cipherType = document.getElementById("cipherType").value;
+    let encryptedMessage = '';
+
+    if (cipherType === "custom") {
+        const key = document.getElementById("customKey").value.trim().toUpperCase();
+        encryptedMessage = customEncrypt(plainText, key);
+    } else if (cipherType === "caesar") {
+        const shift = parseInt(document.getElementById("caesarKey").value) || 0;
+        encryptedMessage = caesarEncrypt(plainText, shift);
+    } else if (cipherType === "binary") {
+        encryptedMessage = binaryEncrypt(plainText);
+    } else if (cipherType === "ascii") {
+        encryptedMessage = asciiEncrypt(plainText);
+    } else if (cipherType === "rot13") {
+        encryptedMessage = rot13Encrypt(plainText);
+    }
+
+    document.getElementById("encryptedMessage").textContent = encryptedMessage.trim();
+}
+
+function decryptMessage() {
+    const cipherText = document.getElementById("cipherText").value;
+    const cipherType = document.getElementById("cipherTypeDecrypt").value;
+    let decryptedMessage = '';
+
+    if (cipherType === "custom") {
+        const key = document.getElementById("customKeyDecrypt").value.trim().toUpperCase();
+        decryptedMessage = customDecrypt(cipherText, key);
+    } else if (cipherType === "caesar") {
+        const shift = parseInt(document.getElementById("caesarKeyDecrypt").value) || 0;
+        decryptedMessage = caesarDecrypt(cipherText, shift);
+    } else if (cipherType === "binary") {
+        decryptedMessage = binaryDecrypt(cipherText);
+    } else if (cipherType === "ascii") {
+        decryptedMessage = asciiDecrypt(cipherText);
+    } else if (cipherType === "rot13") {
+        decryptedMessage = rot13Decrypt(cipherText);
+    }
+
+    document.getElementById("decryptedMessage").textContent = decryptedMessage.trim();
+}
+
+function customEncrypt(text, key) {
+    let result = '';
+    let keyIndex = 0;
+
+    for (let char of text) {
+        if (char.match(/[a-z]/i)) {
+            const shift = key[keyIndex % key.length].charCodeAt(0) - 65;
+            const base = char === char.toLowerCase() ? 97 : 65;
+            result += String.fromCharCode(((char.charCodeAt(0) - base + shift) % 26) + base);
+            keyIndex++;
+        } else {
+            result += char;
+        }
+    }
+
+    return result;
+}
+
+function customDecrypt(text, key) {
+    let result = '';
+    let keyIndex = 0;
+
+    for (let char of text) {
+        if (char.match(/[a-z]/i)) {
+            const shift = key[keyIndex % key.length].charCodeAt(0) - 65;
+            const base = char === char.toLowerCase() ? 97 : 65;
+            result += String.fromCharCode(((char.charCodeAt(0) - base - shift + 26) % 26) + base);
+            keyIndex++;
+        } else {
+            result += char;
+        }
+    }
+
+    return result;
+}
+
+function caesarEncrypt(text, shift) {
+    return text
+        .split('')
+        .map(char => {
+            if (char.match(/[a-z]/i)) {
+                const base = char === char.toLowerCase() ? 97 : 65;
+                return String.fromCharCode(((char.charCodeAt(0) - base + shift) % 26) + base);
+            }
+            return char;
+        })
+        .join('');
+}
+
+function caesarDecrypt(text, shift) {
+    return caesarEncrypt(text, 26 - shift);
+}
+
+function binaryEncrypt(text) {
+    return text
+        .split('')
+        .map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
+        .join(' ');
+}
+
+function binaryDecrypt(binaryText) {
+    return binaryText
+        .split(' ')
+        .map(bin => String.fromCharCode(parseInt(bin, 2)))
+        .join('');
+}
+
+function asciiEncrypt(text) {
+    return text
+        .split('')
+        .map(char => char.charCodeAt(0))
+        .join(' ');
+}
+
+function asciiDecrypt(asciiText) {
+    return asciiText
+        .split(' ')
+        .map(num => String.fromCharCode(parseInt(num)))
+        .join('');
+}
+
+function rot13Encrypt(text) {
+    return text
+        .split('')
+        .map(char => {
+            if (char.match(/[a-z]/i)) {
+                const base = char === char.toLowerCase() ? 97 : 65;
+                return String.fromCharCode(((char.charCodeAt(0) - base + 13) % 26) + base);
+            }
+            return char;
+        })
+        .join('');
+}
+
+function rot13Decrypt(text) {
+    return rot13Encrypt(text); // ROT13 is symmetric
+}
+
+</script>
+</body>
+</html>
